@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vimlesh — Short-style Portfolio</title>
+<meta name="description" content="Short-style animated portfolio — hero + projects + contact">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070710;
+    --glass: rgba(255,255,255,0.04);
+    --muted: rgba(255,255,255,0.7);
+    --accent1:#7c3aed; --accent2:#06b6d4;
+    --card-radius:14px;
+    --maxw:1100px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto; background:linear-gradient(180deg,#04040a 0%,var(--bg) 100%); color:#e9f0ff; -webkit-font-smoothing:antialiased}
+  /* layout: single-column, tall sections (short-like feel) */
+  .page{max-width:var(--maxw);margin:24px auto; padding:12px;display:grid;gap:22px}
+  header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid var(--glass)}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:46px;height:46px;border-radius:10px; background:linear-gradient(90deg,var(--accent1),var(--accent2));display:grid;place-items:center;font-weight:800}
+  nav a{color:var(--muted);text-decoration:none;margin-left:12px;font-weight:600}
+  /* Hero full-bleed card */
+  .hero{
+    display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:center;
+    padding:32px;border-radius:16px;background:linear-gradient(135deg, rgba(124,58,237,0.08), rgba(6,182,212,0.03));
+    border:1px solid var(--glass);overflow:hidden;position:relative;
+  }
+  /* animated gradient stripe (like a short's flashy header) */
+  .stripe{position:absolute;left:-30%;top:-30%;width:160%;height:160%;transform:rotate(-12deg);filter:blur(60px);opacity:0.12;background:linear-gradient(90deg,var(--accent1),var(--accent2));pointer-events:none}
+  .hero-left h1{font-size:2.2rem;margin:0 0 8px 0;line-height:1.03}
+  .hero-left p.lead{color:var(--muted);margin:0 0 18px 0}
+  /* typing effect */
+  .type {font-weight:800;background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,0.6) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  /* action buttons */
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{padding:10px 14px;border-radius:10px;font-weight:700;border:0;cursor:pointer}
+  .btn-primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#071021}
+  .btn-ghost{background:transparent;border:1px solid var(--glass);color:var(--muted)}
+  /* profile card on right */
+  .profile{padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid var(--glass);text-align:center}
+  .avatar{width:130px;height:130px;border-radius:50%;overflow:hidden;margin:0 auto 12px auto;border:5px solid rgba(255,255,255,0.03)}
+  .avatar img{width:100%;height:100%;object-fit:cover}
+  .profile h3{margin:6px 0 4px 0}
+  .muted{color:var(--muted);font-size:0.95rem}
+  /* Projects row — a horizontal carousel that mimics short clips */
+  .projects-row{display:flex;gap:14px;overflow-x:auto;padding:12px 6px;scroll-snap-type:x mandatory}
+  .proj{min-width:220px;scroll-snap-align:center;border-radius:12px;padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border:1px solid var(--glass);flex:0 0 auto;display:flex;flex-direction:column;gap:8px}
+  .proj .thumb{height:120px;border-radius:10px;background:#081023;display:grid;place-items:center;font-weight:700}
+  .proj h4{margin:0;font-size:1rem}
+  .proj p{margin:0;color:var(--muted);font-size:0.9rem}
+  /* Skills grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .skill-card{padding:12px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid var(--glass);text-align:center}
+  /* contact */
+  .contact-card{padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid var(--glass)}
+  input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+  button[type=submit]{margin-top:8px}
+  /* small screens */
+  @media(max-width:980px){
+    .hero{grid-template-columns:1fr;gap:18px}
+    .grid{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:560px){
+    .grid{grid-template-columns:1fr}
+    .projects-row{padding:6px}
+  }
+
+  /* subtle entrance animations */
+  .reveal{opacity:0;transform:translateY(10px);transition:opacity .45s ease, transform .45s ease}
+  .reveal.visible{opacity:1;transform:none}
+  /* small floating play-like pulse for the hero to mimic short's movement */
+  .pulse{width:12px;height:12px;border-radius:50%;background:var(--accent1);box-shadow:0 0 12px var(--accent1);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{transform:scale(.9);opacity:.9}50%{transform:scale(1.5);opacity:.4}100%{transform:scale(.9);opacity:.9}}
+  /* hide horizontal scrollbar look on webkit while keeping scrollability */
+  .projects-row::-webkit-scrollbar{height:8px}
+  .projects-row::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:8px}
+</style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <div class="logo">VK</div>
+        <div>
+          <div style="font-weight:800">Vimlesh Kumar</div>
+          <div style="font-size:.85rem;color:var(--muted)">Frontend • Java • Cybersecurity</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#hero">Home</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <section id="hero" class="hero reveal">
+      <div class="stripe" aria-hidden="true"></div>
+      <div class="hero-left">
+        <h1>Build modern experiences — clean UI, solid code. — <span class="type" id="typeword">Fast UI</span></h1>
+        <p class="lead muted">I'm a developer who loves solving problems and building useful, user-friendly applications. I focus on web apps, Java backends, and security-minded development.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#contact">Hire me</a>
+          <a class="btn btn-ghost" href="#projects">View work</a>
+          <div style="display:inline-flex;align-items:center;gap:8px;padding-left:8px">
+            <div class="pulse" title="active"></div>
+            <div style="color:var(--muted);font-weight:700">Live</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="profile">
+        <div class="avatar"><img src="vimlesh.png" alt="Vimlesh"></div>
+        <h3>Vimlesh Kumar</h3>
+        <div class="muted">Developer • Cricket Player • Learner</div>
+      </aside>
+    </section>
+
+    <!-- PROJECTS (horizontal) -->
+    <section id="projects" class="reveal">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <h3 style="margin:0">Highlights</h3>
+        <div style="color:var(--muted);font-weight:700">Swipe →</div>
+      </div>
+      <div class="projects-row" aria-label="projects">
+        <!-- project items (replace thumbnails with gifs/videos for short-like feel) -->
+        <div class="proj">
+          <div class="thumb">LIBRARY APP</div>
+          <h4>Library Management</h4>
+          <p class="muted">Java Swing app with lending & reports.</p>
+        </div>
+        <div class="proj">
+          <div class="thumb">PORTFOLIO</div>
+          <h4>Interactive Portfolio</h4>
+          <p class="muted">Single-file, animated HTML/CSS portfolio.</p>
+        </div>
+        <div class="proj">
+          <div class="thumb">DASH</div>
+          <h4>ETL Dashboard</h4>
+          <p class="muted">Data pipeline visualizer with charts and exportable reports (prototype)</p>
+        </div>
+        <div class="proj">
+          <div class="thumb">SECURE</div>
+          <h4>Security Tools</h4>
+          <p class="muted">Small tools & hardening guides.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="reveal">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <h3 style="margin:0">Skills</h3>
+        <div style="color:var(--muted)">Proficiency</div>
+      </div>
+      <div class="grid">
+        <div class="skill-card"><strong>HTML & CSS</strong><div class="muted">Responsive UI</div></div>
+        <div class="skill-card"><strong>JavaScript</strong><div class="muted">DOM & Async</div></div>
+        <div class="skill-card"><strong>Java</strong><div class="muted">Desktop & Backend</div></div>
+        <div class="skill-card"><strong>SQL</strong><div class="muted">Queries & Optimization</div></div>
+        <div class="skill-card"><strong>Security</strong><div class="muted">Secure coding</div></div>
+         <div class="skill-card"><strong>AI</strong><div class="muted">Chatboats,Industrial Maintenance</div></div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="reveal">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <h3 style="margin:0">Contact</h3>
+        <div style="color:var(--muted)">Let's collaborate</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:16px">
+        <div class="contact-card">
+          <p class="muted">If you'd like to work together, send a short message and I'll reply.</p>
+          <form id="contactForm">
+            <input type="text" id="name" placeholder="Your name" required style="margin-bottom:8px"><br>
+            <input type="email" id="email" placeholder="Email" required style="margin-bottom:8px"><br>
+            <textarea id="msg" placeholder="Message" rows="5" required></textarea><br>
+            <button class="btn btn-primary" type="submit">Send</button>
+          </form>
+          <div id="status" style="margin-top:10px;color:var(--muted)"></div>
+        </div>
+
+        <aside class="contact-card">
+          <h4 style="margin-top:0">Quick info</h4>
+          <p class="muted"><strong>Email</strong><br> youyvimlesh@gmail.com</p>
+          <p class="muted"><strong>Location</strong><br> Patna, India</p>
+          <p class="muted"><strong>Availability</strong><br> Open to work</p>
+        </aside>
+      </div>
+    </section>
+
+    <footer style="text-align:center;color:var(--muted);padding:18px;border-radius:12px">© <span id="year"></span> Vimlesh Kumar</footer>
+  </div>
+
+<script>
+  // simple typing loop for hero word
+  (function(){
+    const words = ['Fast UI','Clean Code','Secure Apps','Java + Web'];
+    let i=0, j=0, dir=1; const el = document.getElementById('typeword');
+    function tick(){
+      const w = words[i];
+      el.textContent = w.slice(0,j);
+      j += dir;
+      if(j > w.length){ dir = -1; setTimeout(tick,700); return }
+      if(j < 0){ dir = 1; i = (i+1)%words.length; j=0; }
+      setTimeout(tick, 80);
+    }
+    tick();
+  })();
+
+  // reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=> { if(e.isIntersecting) e.target.classList.add('visible') });
+  }, {threshold: .15});
+  reveals.forEach(r=>io.observe(r));
+
+  // simple contact form demo (no server). Replace with Formspree or backend.
+  document.getElementById('contactForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const s = document.getElementById('status');
+    s.textContent = 'Sending... (demo)';
+    setTimeout(()=> s.textContent = 'Message sent — thanks! (demo only)', 900);
+    e.target.reset();
+  });
+
+  // set year
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
